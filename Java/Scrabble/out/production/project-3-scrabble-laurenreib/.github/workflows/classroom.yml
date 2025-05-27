@@ -1,0 +1,102 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: solver.jar exists
+      id: solver-jar-exists
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: solver.jar exists
+        setup-command: ''
+        command: "[ -f solver.jar ]"
+        timeout: 1
+        max-score: 128
+    - name: ".gitignore exists"
+      id: gitignore-exists
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: ".gitignore exists"
+        setup-command: ''
+        command: "[ -f .gitignore ]"
+        timeout: 1
+        max-score: 2
+    - name: At least one pdf in docs
+      id: at-least-one-pdf-in-docs
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: At least one pdf in docs
+        setup-command: ''
+        command: test -d docs && test $(ls -U docs | grep -c .pdf) -ge 1
+        timeout: 1
+        max-score: 4
+    - name: At least 1 java file in src (not necessarily correctly in a package)
+      id: at-least-1-java-file-in-src-not-necessarily-correctly-in-a-package
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: At least 1 java file in src (not necessarily correctly in a package)
+        setup-command: ''
+        command: test -d src && test $(ls -UR src/* | grep -c .java) -ge 1
+        timeout: 1
+        max-score: 8
+    - name: Java files in packages in src
+      id: java-files-in-packages-in-src
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Java files in packages in src
+        setup-command: ''
+        command: test -d src && test $(ls -U src | grep -c .java) -eq 0 && test $(ls
+          -UR src/* | grep -c .java) -ge 1
+        timeout: 10
+        max-score: 16
+    - name: No common generated files in the repo
+      id: no-common-generated-files-in-the-repo
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: No common generated files in the repo
+        setup-command: ''
+        command: "[ ! -e .idea ] && [ ! -e out ] && test $(ls -UAR | grep -c -e \\\\.iml
+          -e \\\\.class -e \\\\.DS_Store -e META-INF) -eq 0"
+        timeout: 1
+        max-score: 32
+    - name: scorechecker.jar exists
+      id: scorechecker-jar-exists
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: scorechecker.jar exists
+        setup-command: ''
+        command: "[ -f scorechecker.jar ]"
+        timeout: 1
+        max-score: 64
+    - name: README.md exists
+      id: readme-md-exists
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: README.md exists
+        setup-command: ''
+        command: "[ -f README.md ]"
+        timeout: 1
+        max-score: 1
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        SOLVER-JAR-EXISTS_RESULTS: "${{steps.solver-jar-exists.outputs.result}}"
+        GITIGNORE-EXISTS_RESULTS: "${{steps.gitignore-exists.outputs.result}}"
+        AT-LEAST-ONE-PDF-IN-DOCS_RESULTS: "${{steps.at-least-one-pdf-in-docs.outputs.result}}"
+        AT-LEAST-1-JAVA-FILE-IN-SRC-NOT-NECESSARILY-CORRECTLY-IN-A-PACKAGE_RESULTS: "${{steps.at-least-1-java-file-in-src-not-necessarily-correctly-in-a-package.outputs.result}}"
+        JAVA-FILES-IN-PACKAGES-IN-SRC_RESULTS: "${{steps.java-files-in-packages-in-src.outputs.result}}"
+        NO-COMMON-GENERATED-FILES-IN-THE-REPO_RESULTS: "${{steps.no-common-generated-files-in-the-repo.outputs.result}}"
+        SCORECHECKER-JAR-EXISTS_RESULTS: "${{steps.scorechecker-jar-exists.outputs.result}}"
+        README-MD-EXISTS_RESULTS: "${{steps.readme-md-exists.outputs.result}}"
+      with:
+        runners: solver-jar-exists,gitignore-exists,at-least-one-pdf-in-docs,at-least-1-java-file-in-src-not-necessarily-correctly-in-a-package,java-files-in-packages-in-src,no-common-generated-files-in-the-repo,scorechecker-jar-exists,readme-md-exists

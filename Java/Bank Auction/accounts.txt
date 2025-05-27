@@ -1,0 +1,6 @@
+Users, ID, Type, Amount
+Jill, 21010, 0, 120.0
+new_user, 1111, 1, 300.0
+Bill, 2121, 0, 0.0
+Art-AuctionHouse, 1423, 1, 0.0
+Tech-AuctionHouse, 2222, 1, 0.0

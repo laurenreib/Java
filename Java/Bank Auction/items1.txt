@@ -1,0 +1,3 @@
+Mirror 200
+Statue, 700
+AntiqueClock 150

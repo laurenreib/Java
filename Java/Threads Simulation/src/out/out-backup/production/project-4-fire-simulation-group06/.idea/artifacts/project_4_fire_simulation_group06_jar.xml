@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="project-4-fire-simulation-group06:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/project_4_fire_simulation_group06_jar</output-path>
+    <root id="archive" name="project-4-fire-simulation-group06.jar">
+      <element id="module-output" name="project-4-fire-simulation-group06" />
+    </root>
+  </artifact>
+</component>

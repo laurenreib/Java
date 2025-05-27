@@ -1,0 +1,3 @@
+Laptop 250
+Headphones 150
+Monitor 300
